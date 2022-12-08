@@ -1,4 +1,4 @@
-# Multi-Instance Serverless Lambda Example
+# Multi-instance Serverless AWS Lambda function example
 
 This example demonstrates how to deploy multiple instances (or copies) of the same lambda function by using the "--param" Serverless option to pass in an instance name. The main idea is to rename AWS resources and outputs which would otherwise clash using the instance name. Each lambda's configuration can be made instance-specific by including the instance name in environment variable or parameter store keys. The benefit of this approach is that only one lambda function needs to be defined in `serverless.ts` (or `serverless.yml`), but any number of deployments of it can be made.
 
@@ -71,4 +71,4 @@ npx sls remove --region ap-southeast-2 --param="instance=foo"
 
 ## Acknowledgements
 
-Inspired by a [comment](https://github.com/serverless/serverless/issues/9361#issuecomment-884602588) by [**rdemorais**](https://github.com/rdemorais)'s on Serverless issue [Output collision when deploying a split service into the same bucket #9361](https://github.com/serverless/serverless/issues/9361).
+Inspired by a [comment](https://github.com/serverless/serverless/issues/9361#issuecomment-884602588) by [**@rdemorais**](https://github.com/rdemorais)'s on Serverless issue [**Output collision when deploying a split service into the same bucket #9361**](https://github.com/serverless/serverless/issues/9361).
