@@ -1,44 +1,47 @@
 # Multi-instance Serverless AWS Lambda function example
 
-This example demonstrates how to deploy multiple instances (or copies) of the same lambda function by using the "--param" Serverless option to pass in an instance name. The main idea is to rename AWS resources and outputs which would otherwise clash using the instance name. Each lambda's configuration can be made instance-specific by including the instance name in environment variable or parameter store keys. The benefit of this approach is that only one lambda function needs to be defined in `serverless.ts` (or `serverless.yml`), but any number of deployments of it can be made.
+This example demonstrates how to deploy multiple instances (or copies) of the same lambda function by using the "--param" `sls` option to pass in an instance name. The main idea is to rename AWS resources and outputs which would otherwise clash using the instance name.
+
+A lambda instance's configuration can then be made instance-specific by adding the instance name to its environment variable or parameter store keys.
+
+The benefit of this approach is that only one lambda function needs to be defined in `serverless.ts` (or `serverless.yml`), but any number of copies of it can be deployed directly from the command line.
 
 ## Setup
 
 1. Install Node.js 18 (recommended: [Node Version Manager](https://github.com/nvm-sh/nvm#install--update-script)).
 
 2. Install packages:
-
-```bash
-npm i
-```
+   ```bash
+   npm i
+   ```
 
 ## Use case
 
-- Any case where multiple lambda functions are needed and their implementation is identical, but you don't want to explicitly define each instance in the `serverless.yml` file.
+When you want to deploy multiple lambda functions with the same implementation, but you don't want to explicitly define each copy in `serverless.yml`.
+
+For example, you could deploy the lambda copies in a continuous deployment (CD) pipeline and configure them to fetch data from different sources based on their instance names.
 
 ## Usage
 
 ### Deployment
 
-To deploy an instance "foo" of the lambda function `hello` to the default `dev` stage environment in the `ap-southeast-2` region , run:
+To deploy an instance "foo" of the lambda `hello` to the default `dev` stage in the `ap-southeast-2` region , run:
 
 ```bash
 npx sls deploy --region ap-southeast-2 --param="instance=foo"
 ```
 
-Another instance, "bar", can then be deployed with:
+Another instance, "bar", can be deployed with:
 
 ```bash
 npx sls deploy --region ap-southeast-2 --param="instance=bar"
 ```
 
-Two separate instances of `hello` are now deployed on AWS:
-
+Now, two separate yet identical `hello` lambdas are available on AWS:
 <img src="./.images/aws-lambda-screenshot.png" alt="Both instances of `hello` are deployed." width="600"/>
 <br>
-<br>
 
-The "--param" option is required to view information about a specific instance:
+Note that the "--param" option is now required when running other `serverless` commands, such as `sls info`:
 
 ```bash
 npx sls info --region ap-southeast-2 --param="instance=foo"
@@ -46,7 +49,7 @@ npx sls info --region ap-southeast-2 --param="instance=foo"
 
 ### Invocation
 
-Invoke an instance of `hello` by passing the "--param" option:
+To invoke an instance of `hello` using `sls invoke`, pass the instance name to the "--param" option:
 
 ```bash
 npx sls invoke -f hello --region ap-southeast-2 --param="instance=foo"
@@ -63,7 +66,7 @@ Output:
 
 ### Removal
 
-The "--param" option is also required to tear down the stack associated with a `hello` instance.
+"--param" is also required to run the `sls remove` command to tear down the CloudFormation stack associated with a specific instance.
 
 ```bash
 npx sls remove --region ap-southeast-2 --param="instance=foo"
@@ -71,4 +74,5 @@ npx sls remove --region ap-southeast-2 --param="instance=foo"
 
 ## Acknowledgements
 
-Inspired by a [comment](https://github.com/serverless/serverless/issues/9361#issuecomment-884602588) by [**@rdemorais**](https://github.com/rdemorais)'s on Serverless issue [**Output collision when deploying a split service into the same bucket #9361**](https://github.com/serverless/serverless/issues/9361).
+- [This comment](https://github.com/serverless/serverless/issues/9361#issuecomment-884602588) by [**@rdemorais**](https://github.com/rdemorais) on Serverless issue [#9361](https://github.com/serverless/serverless/issues/9361).
+- [**@billkidwell**](https://github.com/billkidwell)'s [Simple Kinesis Example](https://github.com/serverless/examples/tree/v3/aws-node-typescript-kinesis).
